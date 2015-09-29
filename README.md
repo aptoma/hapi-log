@@ -1,4 +1,4 @@
-[![Build Status](https://magnum.travis-ci.com/aptoma/hapi-log.svg)](https://magnum.travis-ci.com/aptoma/hapi-log)
+[![Build Status](https://travis-ci.org/aptoma/hapi-log.svg)](https://travis-ci.org/aptoma/hapi-log)
 
 # Hapi Log
 
