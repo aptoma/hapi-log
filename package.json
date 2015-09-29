@@ -1,0 +1,42 @@
+{
+  "name": "@aptoma/hapi-log",
+  "author": "Martin Jonsson <martin@aptoma.com>",
+  "version": "0.0.0",
+  "description": "Hapi Log Plugin",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:aptoma/hapi-log.git"
+  },
+  "scripts": {
+    "test": "NODE_ENV=test jscs test/ lib/ *.js && jshint test/ lib/ *.js && istanbul cover -i '*.js lib/*.js' _mocha -- -u exports -R spec 'test/**/*.test.js'",
+    "watch": "mocha --watch 'test/**/*.js' --timeout 500",
+    "ci": "NODE_ENV=test npm test --coverage && istanbul report cobertura && nsp shrinkwrap",
+    "release": "npm test && release-it -n -i patch",
+    "release:minor": "npm test && release-it -n -i minor",
+    "release:major": "npm test && release-it -n -i major"
+  },
+  "license": "UNLICENSED",
+  "dependencies": {
+    "hoek": "^2.14.0",
+    "json-stringify-safe": "^5.0.1",
+    "moment": "^2.10.6"
+  },
+  "devDependencies": {
+    "hapi": "^10.1.0",
+    "istanbul": "^0.3.8",
+    "jscs": "^1.11.3",
+    "jshint": "^2.6.3",
+    "mocha": "^2.2.1",
+    "nsp": "^1.1.0",
+    "release-it": "^2.0.3",
+    "should": "^7.0.1",
+    "sinon": "^1.16.1"
+  },
+  "jscsConfig": {
+    "preset": "yandex",
+    "disallowMultipleVarDecl": "exceptUndefined",
+    "maximumLineLength": null,
+    "validateIndentation": "\t"
+  }
+}
