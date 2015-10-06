@@ -1,7 +1,24 @@
 'use strict';
 var Logger = require('./lib/logger');
 
-exports.register = function (server, options, next) {
+var internals = {
+	instances: {}
+};
+
+module.exports = function (name, opts) {
+	if (typeof(name) === 'object') {
+		opts = name;
+		name = '_default';
+	}
+
+	if (!internals.instances[name]) {
+		internals.instances[name] = new Logger(opts);
+	}
+
+	return internals.instances[name];
+};
+
+module.exports.register = function (server, options, next) {
 	var log = new Logger(options);
 	server.on('request', log.handleRequest.bind(log));
 	server.on('response', log.handleResponse.bind(log));
@@ -21,11 +38,12 @@ exports.register = function (server, options, next) {
 		});
 	}
 
+	internals.instances[options.name || 'hapi'] = log;
 	next();
 };
 
-exports.register.attributes = {
+module.exports.register.attributes = {
 	name: 'service-log'
 };
 
-exports.Logger = Logger;
+module.exports.Logger = Logger;

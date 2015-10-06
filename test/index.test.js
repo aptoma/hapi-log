@@ -1,8 +1,8 @@
 'use strict';
 var Hapi = require('hapi');
 var sinon = require('sinon');
-
-require('should');
+var should = require('should');
+var plugin = require('../');
 
 describe('Log service', function () {
 	var server;
@@ -17,7 +17,7 @@ describe('Log service', function () {
 		server = new Hapi.Server({debug: false});
 		server.connection();
 		server.register({
-				register: require('../'),
+				register: plugin,
 				options: {handler: testHandler}
 			},
 			function (err) {
@@ -81,6 +81,17 @@ describe('Log service', function () {
 	it('should handle log event', function () {
 		server.log('foo', 'bar');
 		consoleSpy.firstCall.args[0].should.endWith('[log,foo], bar');
+	});
+
+	it('should set default name for instance', function () {
+		var log1 = plugin();
+		should.ok(plugin() === log1);
+	});
+
+	it('should set name for instance', function () {
+		var log1 = plugin('foo');
+		should.ok(plugin() !== log1);
+		should.ok(plugin('foo') === log1);
 	});
 
 	function route(path, handler) {

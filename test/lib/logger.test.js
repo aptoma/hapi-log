@@ -36,4 +36,16 @@ describe('Logger', function () {
 		consoleSpy.firstCall.args[0].should.endWith('[info,debug], foo');
 	});
 
+	it('should allow multiple messages', function () {
+		log = new Logger({handler: testHandler});
+		log.log(['info', 'debug'], 'foo', {foo: 'bar'}, 'ping');
+		consoleSpy.firstCall.args[0].should.endWith('[info,debug], foo { foo: \'bar\' } ping');
+	});
+
+	it('should interpolate messages', function () {
+		log = new Logger({handler: testHandler});
+		log.log(['info', 'debug'], '%s,%s', 'foo', 'bar');
+		consoleSpy.firstCall.args[0].should.endWith('[info,debug], foo,bar');
+	});
+
 });
