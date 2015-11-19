@@ -9,8 +9,9 @@
     "url": "git@github.com:aptoma/hapi-log.git"
   },
   "scripts": {
-    "test": "NODE_ENV=test jscs test/ lib/ *.js && jshint test/ lib/ *.js && istanbul cover -i '*.js lib/*.js' _mocha -- -u exports -R spec 'test/**/*.test.js'",
+    "test": "NODE_ENV=test jscs test/ lib/ *.js && jshint test/ lib/ *.js && istanbul cover -i '*.js lib/*.js' _mocha -- -u exports -R spec 'test/**/*.test.js' && npm run coverage",
     "watch": "mocha --watch 'test/**/*.js' --timeout 500",
+    "coverage": "istanbul check-coverage --statement 100 --branch 100 --function 100",
     "ci": "NODE_ENV=test npm test --coverage && istanbul report cobertura && nsp shrinkwrap",
     "release": "npm test && release-it -n -i patch",
     "release:minor": "npm test && release-it -n -i minor",

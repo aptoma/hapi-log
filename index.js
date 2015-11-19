@@ -6,6 +6,7 @@ var internals = {
 };
 
 module.exports = function (name, opts) {
+	name = name || '_default';
 	if (typeof(name) === 'object') {
 		opts = name;
 		name = '_default';
