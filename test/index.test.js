@@ -121,6 +121,37 @@ describe('Log service', function () {
 		});
 	});
 
+	it('should handle not include contentLength if missing', function (done) {
+		server = new Hapi.Server({debug: false});
+		server.connection();
+		server.register({
+				register: plugin,
+				options: {handler: testHandler}
+			},
+			function (err) {
+				if (err) {
+					return done(err);
+				}
+			}
+		);
+
+		route('/hello', function (req, reply) {
+			reply('hello');
+		});
+
+		server.inject({
+			method: 'GET',
+			url: '/hello',
+			headers: {
+				'Accept-Encoding': 'compress, gzip' // disables contentLength
+			}
+		}, function () {
+			var json = JSON.parse(consoleSpy.firstCall.args[0]);
+			json.should.not.have.properties(['contentLength']);
+			done();
+		});
+	});
+
 	it('should handle response event in jsonOutput', function (done) {
 		server = new Hapi.Server({debug: false});
 		server.connection();
@@ -143,13 +174,14 @@ describe('Log service', function () {
 			method: 'GET',
 			url: '/hello',
 			headers: {
-				Referer: 'http://foo.com'
+				Referer: 'http://foo.com',
 			}
 		}, function () {
 			var json = JSON.parse(consoleSpy.firstCall.args[0]);
 			json.should.have.properties([
-				'time',
-				'tags',
+				'_time',
+				'_tags',
+				'contentLength',
 				'requestId',
 				'remoteAddress',
 				'host',
