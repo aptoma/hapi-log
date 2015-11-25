@@ -30,7 +30,7 @@ describe('Logger', function () {
 
 		log.log('info', 'foo');
 		var json = JSON.parse(consoleSpy.firstCall.args[0]);
-		json.time.should.equal(moment().format('YYYY-MM-DD HH:mm:ss'));
+		json._time.should.equal(moment().format('YYYY-MM-DD HH:mm:ss'));
 	});
 
 	describe('humanReadable Format', function () {
@@ -78,9 +78,9 @@ describe('Logger', function () {
 			log = new Logger({handler: testHandler, jsonOutput: true});
 			log.log('info', 'bar');
 			var json = JSON.parse(consoleSpy.firstCall.args[0]);
-			should.exist(json.time);
+			should.exist(json._time);
 			json.msg.should.equal('bar');
-			json.tags.should.eql(['info']);
+			json._tags.should.eql(['info']);
 		});
 
 		it('should log object', function () {
