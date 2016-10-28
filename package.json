@@ -4,6 +4,9 @@
   "version": "3.0.1",
   "description": "Hapi Log Plugin",
   "main": "index.js",
+  "bin": {
+    "pretty-hapi-log": "./lib/pretty.js"
+  },
   "repository": {
     "type": "git",
     "url": "git@github.com:aptoma/hapi-log.git"
@@ -22,6 +25,7 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
+	"chalk": "^1.1.3",
     "hoek": "^4.1.0",
     "json-stringify-safe": "^5.0.1",
     "moment": "^2.15.2"
