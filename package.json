@@ -10,7 +10,7 @@
   },
   "scripts": {
     "lint": "eslint --ext '.js' lib test '*.js'",
-    "test": "npm run lint && NODE_ENV=test istanbul cover -i 'lib/**/*.js *.js' _mocha -- -u exports -R spec --timeout 3000 'test/**/*.test.js'",
+    "test": "npm run lint && NODE_ENV=test istanbul cover -i '{.,./lib}/*.js' _mocha -- -u exports -R spec --timeout 3000 'test/**/*.test.js'",
     "watch": "mocha --watch 'test/**/*.js' --timeout 500",
     "ci": "npm test --coverage && istanbul report cobertura",
     "release": "npm test && release-it -n -i patch",
@@ -22,19 +22,19 @@
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "hoek": "^2.14.0",
+    "hoek": "^4.1.0",
     "json-stringify-safe": "^5.0.1",
-    "moment": "^2.10.6"
+    "moment": "^2.15.2"
   },
   "devDependencies": {
-    "@aptoma/eslint-config": "^5.0.0",
+    "@aptoma/eslint-config": "^5.0.1",
     "eslint": "^3.8.1",
-    "hapi": "^10.1.0",
-    "istanbul": "^0.3.8",
-    "mocha": "^2.2.1",
+    "hapi": "^15.2.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.1.2",
     "nsp": "^2.0.2",
     "release-it": "^2.0.3",
-    "should": "^7.0.1",
+    "should": "^11.1.1",
     "sinon": "^1.16.1"
   }
 }

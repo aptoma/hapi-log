@@ -1,19 +1,19 @@
 'use strict';
 const Hapi = require('hapi');
-const sinon = require('sinon');
 const should = require('should');
 const plugin = require('../');
 
 describe('Log service', () => {
 	let server;
-	let consoleSpy;
-	const testHandler = {
-		log: () => {
-		}
-	};
+	let testHandler;
 
 	beforeEach((done) => {
-		consoleSpy = sinon.spy(testHandler, 'log');
+		testHandler = {
+			log(data) {
+				testHandler.listener(data);
+			},
+			listener() {}
+		};
 		server = new Hapi.Server({debug: false});
 		server.connection();
 		server.register({
@@ -27,10 +27,6 @@ describe('Log service', () => {
 		});
 	});
 
-	afterEach(() => {
-		testHandler.log.restore();
-	});
-
 	it('should include meta', (done) => {
 		let reqId;
 		route('/hello', (req, reply) => {
@@ -39,12 +35,14 @@ describe('Log service', () => {
 			reply('hello');
 		});
 
+		testHandler.listener = (data) => {
+			data.should.endWith('{"requestId":"' + reqId + '"}');
+			done();
+		};
+
 		server.inject({
 			method: 'GET',
 			url: '/hello'
-		}, () => {
-			consoleSpy.firstCall.args[0].should.endWith('{"requestId":"' + reqId + '"}');
-			done();
 		});
 	});
 
@@ -64,16 +62,18 @@ describe('Log service', () => {
 			reply(new Error('crap'));
 		});
 
+		testHandler.listener = (data) => {
+			data.should.match(/\[error\], crap, stack/);
+			done();
+		};
+
 		server.inject({
 			method: 'GET',
 			url: '/error',
 			headers: {
 				Referer: 'http://foo.com'
 			}
-		}, () => {
-			consoleSpy.firstCall.args[0].match(/Error: Uncaught error: crap/);
-			done();
-		});
+		}, () => {});
 	});
 
 	it('should handle error', (done) => {
@@ -81,14 +81,16 @@ describe('Log service', () => {
 			reply(new Error('crap'));
 		});
 
+		testHandler.listener = (data) => {
+			data.should.match(/\[error\], crap, stack/);
+			done();
+		};
+
 		server.inject({
 			method: 'GET',
 			url: '/error',
 			credentials: {account: {clientId: 'example'}}
-		}, () => {
-			consoleSpy.firstCall.args[0].match(/Error: Uncaught error: crap/);
-			done();
-		});
+		}, () => {});
 	});
 
 	it('should handle response event and respons and onPreResponseError should ignore non error', (done) => {
@@ -107,12 +109,14 @@ describe('Log service', () => {
 			reply('hello');
 		});
 
+		testHandler.listener = (data) => {
+			data.should.match(/\[response\]/);
+			done();
+		};
+
 		server.inject({
 			method: 'GET',
 			url: '/hello'
-		}, () => {
-			consoleSpy.firstCall.args[0].should.match(/\[response\]/);
-			done();
 		});
 	});
 
@@ -132,16 +136,18 @@ describe('Log service', () => {
 			reply('hello');
 		});
 
+		testHandler.listener = (data) => {
+			const json = JSON.parse(data);
+			json.should.not.have.properties(['contentLength']);
+			done();
+		};
+
 		server.inject({
 			method: 'GET',
 			url: '/hello',
 			headers: {
 				'Accept-Encoding': 'compress, gzip' // disables contentLength
 			}
-		}, () => {
-			const json = JSON.parse(consoleSpy.firstCall.args[0]);
-			json.should.not.have.properties(['contentLength']);
-			done();
 		});
 	});
 
@@ -161,14 +167,8 @@ describe('Log service', () => {
 			reply('hello');
 		});
 
-		server.inject({
-			method: 'GET',
-			url: '/hello',
-			headers: {
-				Referer: 'http://foo.com'
-			}
-		}, () => {
-			const json = JSON.parse(consoleSpy.firstCall.args[0]);
+		testHandler.listener = (data) => {
+			const json = JSON.parse(data);
 			json.should.have.properties([
 				'_time',
 				'_tags',
@@ -185,12 +185,24 @@ describe('Log service', () => {
 				'referer'
 			]);
 			done();
+		};
+
+		server.inject({
+			method: 'GET',
+			url: '/hello',
+			headers: {
+				Referer: 'http://foo.com'
+			}
 		});
 	});
 
-	it('should handle log event', () => {
+	it('should handle log event', (done) => {
+		testHandler.listener = (data) => {
+			data.should.endWith('[log,foo], { foo: \'bar\' }');
+			done();
+		};
+
 		server.log('foo', {foo: 'bar'});
-		consoleSpy.firstCall.args[0].should.endWith('[log,foo], { foo: \'bar\' }');
 	});
 
 	it('should set default name for instance', () => {
