@@ -1,13 +1,13 @@
 'use strict';
-var Logger = require('./lib/logger');
+const Logger = require('./lib/logger');
 
-var internals = {
+const internals = {
 	instances: {}
 };
 
 module.exports = function (name, opts) {
 	name = name || '_default';
-	if (typeof(name) === 'object') {
+	if (typeof (name) === 'object') {
 		opts = name;
 		name = '_default';
 	}
@@ -20,7 +20,7 @@ module.exports = function (name, opts) {
 };
 
 module.exports.register = function (server, options, next) {
-	var log = new Logger(options);
+	const log = new Logger(options);
 	server.on('request', log.handleRequest.bind(log));
 	server.on('response', log.handleResponse.bind(log));
 	server.on('log', log.handleLog.bind(log));
@@ -29,8 +29,8 @@ module.exports.register = function (server, options, next) {
 	// optionally add error logging on onPreResponse.
 	// To be used when reformatting output for errors in other plugins since it will disable the request-error event
 	if (options.onPreResponseError) {
-		server.ext('onPreResponse', function (request, reply) {
-			var response = request.response;
+		server.ext('onPreResponse', (request, reply) => {
+			const response = request.response;
 			// check isServer cause we don't log the expected errors we return.
 			if (response.isBoom && response.isServer) {
 				log.handleError(request, response);

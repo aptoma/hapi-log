@@ -1,40 +1,39 @@
 'use strict';
-var Hapi = require('hapi');
-var sinon = require('sinon');
-var should = require('should');
-var plugin = require('../');
+const Hapi = require('hapi');
+const sinon = require('sinon');
+const should = require('should');
+const plugin = require('../');
 
-describe('Log service', function () {
-	var server;
-	var consoleSpy;
-	var testHandler = {
-		log: function () {
+describe('Log service', () => {
+	let server;
+	let consoleSpy;
+	const testHandler = {
+		log: () => {
 		}
 	};
 
-	beforeEach(function (done) {
+	beforeEach((done) => {
 		consoleSpy = sinon.spy(testHandler, 'log');
 		server = new Hapi.Server({debug: false});
 		server.connection();
 		server.register({
-				register: plugin,
-				options: {handler: testHandler, jsonOutput: false}
-			},
-			function (err) {
-				if (err) {
-					return done(err);
-				}
-				done();
-			});
+			register: plugin,
+			options: {handler: testHandler, jsonOutput: false}
+		}, (err) => {
+			if (err) {
+				return done(err);
+			}
+			done();
+		});
 	});
 
-	afterEach(function () {
+	afterEach(() => {
 		testHandler.log.restore();
 	});
 
-	it('should include meta', function (done) {
-		var reqId;
-		route('/hello', function (req, reply) {
+	it('should include meta', (done) => {
+		let reqId;
+		route('/hello', (req, reply) => {
 			reqId = req.id;
 			req.log(['foo'], 'bar');
 			reply('hello');
@@ -43,27 +42,25 @@ describe('Log service', function () {
 		server.inject({
 			method: 'GET',
 			url: '/hello'
-		}, function () {
+		}, () => {
 			consoleSpy.firstCall.args[0].should.endWith('{"requestId":"' + reqId + '"}');
 			done();
 		});
 	});
 
-	it('should handle onPreResponse', function (done) {
+	it('should handle onPreResponse', (done) => {
 		server = new Hapi.Server({debug: false});
 		server.connection();
 		server.register({
-				register: plugin,
-				options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
-			},
-			function (err) {
-				if (err) {
-					return done(err);
-				}
+			register: plugin,
+			options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
+		}, (err) => {
+			if (err) {
+				return done(err);
 			}
-		);
+		});
 
-		route('/error', function (req, reply) {
+		route('/error', (req, reply) => {
 			reply(new Error('crap'));
 		});
 
@@ -73,14 +70,14 @@ describe('Log service', function () {
 			headers: {
 				Referer: 'http://foo.com'
 			}
-		}, function () {
+		}, () => {
 			consoleSpy.firstCall.args[0].match(/Error: Uncaught error: crap/);
 			done();
 		});
 	});
 
-	it('should handle error', function (done) {
-		route('/error', function (req, reply) {
+	it('should handle error', (done) => {
+		route('/error', (req, reply) => {
 			reply(new Error('crap'));
 		});
 
@@ -88,54 +85,50 @@ describe('Log service', function () {
 			method: 'GET',
 			url: '/error',
 			credentials: {account: {clientId: 'example'}}
-		}, function () {
+		}, () => {
 			consoleSpy.firstCall.args[0].match(/Error: Uncaught error: crap/);
 			done();
 		});
 	});
 
-	it('should handle response event and respons and onPreResponseError should ignore non error', function (done) {
+	it('should handle response event and respons and onPreResponseError should ignore non error', (done) => {
 		server = new Hapi.Server({debug: false});
 		server.connection();
 		server.register({
-				register: plugin,
-				options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
-			},
-			function (err) {
-				if (err) {
-					return done(err);
-				}
+			register: plugin,
+			options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
+		}, (err) => {
+			if (err) {
+				return done(err);
 			}
-		);
+		});
 
-		route('/hello', function (req, reply) {
+		route('/hello', (req, reply) => {
 			reply('hello');
 		});
 
 		server.inject({
 			method: 'GET',
 			url: '/hello'
-		}, function () {
+		}, () => {
 			consoleSpy.firstCall.args[0].should.match(/\[response\]/);
 			done();
 		});
 	});
 
-	it('should handle not include contentLength if missing', function (done) {
+	it('should handle not include contentLength if missing', (done) => {
 		server = new Hapi.Server({debug: false});
 		server.connection();
 		server.register({
-				register: plugin,
-				options: {handler: testHandler}
-			},
-			function (err) {
-				if (err) {
-					return done(err);
-				}
+			register: plugin,
+			options: {handler: testHandler}
+		}, (err) => {
+			if (err) {
+				return done(err);
 			}
-		);
+		});
 
-		route('/hello', function (req, reply) {
+		route('/hello', (req, reply) => {
 			reply('hello');
 		});
 
@@ -145,28 +138,26 @@ describe('Log service', function () {
 			headers: {
 				'Accept-Encoding': 'compress, gzip' // disables contentLength
 			}
-		}, function () {
-			var json = JSON.parse(consoleSpy.firstCall.args[0]);
+		}, () => {
+			const json = JSON.parse(consoleSpy.firstCall.args[0]);
 			json.should.not.have.properties(['contentLength']);
 			done();
 		});
 	});
 
-	it('should handle response event in jsonOutput', function (done) {
+	it('should handle response event in jsonOutput', (done) => {
 		server = new Hapi.Server({debug: false});
 		server.connection();
 		server.register({
-				register: plugin,
-				options: {handler: testHandler}
-			},
-			function (err) {
-				if (err) {
-					return done(err);
-				}
+			register: plugin,
+			options: {handler: testHandler}
+		}, (err) => {
+			if (err) {
+				return done(err);
 			}
-		);
+		});
 
-		route('/hello', function (req, reply) {
+		route('/hello', (req, reply) => {
 			reply('hello');
 		});
 
@@ -174,10 +165,10 @@ describe('Log service', function () {
 			method: 'GET',
 			url: '/hello',
 			headers: {
-				Referer: 'http://foo.com',
+				Referer: 'http://foo.com'
 			}
-		}, function () {
-			var json = JSON.parse(consoleSpy.firstCall.args[0]);
+		}, () => {
+			const json = JSON.parse(consoleSpy.firstCall.args[0]);
 			json.should.have.properties([
 				'_time',
 				'_tags',
@@ -197,18 +188,18 @@ describe('Log service', function () {
 		});
 	});
 
-	it('should handle log event', function () {
+	it('should handle log event', () => {
 		server.log('foo', {foo: 'bar'});
 		consoleSpy.firstCall.args[0].should.endWith('[log,foo], { foo: \'bar\' }');
 	});
 
-	it('should set default name for instance', function () {
-		var log1 = plugin({});
+	it('should set default name for instance', () => {
+		const log1 = plugin({});
 		should.ok(plugin() === log1);
 	});
 
-	it('should set name for instance', function () {
-		var log1 = plugin('foo');
+	it('should set name for instance', () => {
+		const log1 = plugin('foo');
 		should.ok(plugin() !== log1);
 		should.ok(plugin('foo') === log1);
 	});
