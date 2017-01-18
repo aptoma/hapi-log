@@ -91,6 +91,13 @@ describe('Logger', () => {
 			json.monkey.should.equal('people');
 		});
 
+		it('should log array', () => {
+			log = new Logger({handler: testHandler, jsonOutput: true});
+			log.log('info', ['a', 'b']);
+			const json = JSON.parse(consoleSpy.firstCall.args[0]);
+			json.msg.should.eql(['a', 'b']);
+		});
+
 		it('should log error stack', () => {
 			log = new Logger({handler: testHandler, jsonOutput: true});
 			log.log('info', new Error('crap'));
