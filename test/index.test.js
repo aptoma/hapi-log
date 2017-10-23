@@ -1,13 +1,14 @@
 'use strict';
 const Hapi = require('hapi');
 const should = require('should');
-const plugin = require('../');
+const index = require('../');
+const plugin = index.plugin;
 
 describe('Log service', () => {
 	let server;
 	let testHandler;
 
-	beforeEach((done) => {
+	beforeEach(async () => {
 		testHandler = {
 			log(data) {
 				testHandler.listener(data);
@@ -15,28 +16,24 @@ describe('Log service', () => {
 			listener() {}
 		};
 		server = new Hapi.Server({debug: false});
-		server.connection();
-		server.register({
-			register: plugin,
+		await server.register({
+			plugin: plugin,
 			options: {handler: testHandler, jsonOutput: false}
-		}, (err) => {
-			if (err) {
-				return done(err);
-			}
-			done();
 		});
 	});
 
+
 	it('should include meta', (done) => {
 		let reqId;
-		route('/hello', (req, reply) => {
-			reqId = req.id;
+		route('/hello', (req) => {
+			reqId = req.info.id;
 			req.log(['foo'], 'bar');
-			reply('hello');
+			return 'hello';
 		});
 
 		testHandler.listener = (data) => {
 			data.should.endWith('{"requestId":"' + reqId + '"}');
+			testHandler.listener = () => {};
 			done();
 		};
 
@@ -48,93 +45,90 @@ describe('Log service', () => {
 
 	it('should handle onPreResponse', (done) => {
 		server = new Hapi.Server({debug: false});
-		server.connection();
-		server.register({
-			register: plugin,
-			options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
-		}, (err) => {
-			if (err) {
-				return done(err);
-			}
-		});
+		server
+			.register({
+				plugin: plugin,
+				options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
+			})
+			.catch(done);
 
-		route('/error', (req, reply) => {
-			reply(new Error('crap'));
+		route('/error', () => {
+			throw new Error('crap');
 		});
 
 		testHandler.listener = (data) => {
 			data.should.match(/\[error\], crap, stack/);
+			testHandler.listener = () => {};
 			done();
 		};
 
-		server.inject({
-			method: 'GET',
-			url: '/error',
-			headers: {
-				Referer: 'http://foo.com'
-			}
-		}, () => {});
+		server
+			.inject({
+				method: 'GET',
+				url: '/error',
+				headers: {
+					Referer: 'http://foo.com'
+				}
+			})
+			.catch(done);
 	});
 
 	it('should handle error', (done) => {
-		route('/error', (req, reply) => {
-			reply(new Error('crap'));
+		route('/error', () => {
+			throw new Error('crap');
 		});
 
 		testHandler.listener = (data) => {
 			data.should.match(/\[error\], crap, stack/);
+			testHandler.listener = () => {};
 			done();
 		};
 
-		server.inject({
-			method: 'GET',
-			url: '/error',
-			credentials: {account: {clientId: 'example'}}
-		}, () => {});
+		server
+			.inject({
+				method: 'GET',
+				url: '/error',
+				credentials: {account: {clientId: 'example'}}
+			})
+			.catch(done);
 	});
 
 	it('should handle response event and respons and onPreResponseError should ignore non error', (done) => {
 		server = new Hapi.Server({debug: false});
-		server.connection();
-		server.register({
-			register: plugin,
-			options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
-		}, (err) => {
-			if (err) {
-				return done(err);
-			}
-		});
 
-		route('/hello', (req, reply) => {
-			reply('hello');
-		});
+		server
+			.register({
+				plugin: plugin,
+				options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
+			})
+			.catch(done);
+
+		route('/hello', () => 'hello');
 
 		testHandler.listener = (data) => {
 			data.should.match(/\[response\]/);
 			done();
 		};
 
-		server.inject({
-			method: 'GET',
-			url: '/hello'
-		});
+		server
+			.inject({
+				method: 'GET',
+				url: '/hello'
+			})
+			.catch(done);
 	});
 
 	it('should handle not include contentLength if missing', (done) => {
-		server = new Hapi.Server({debug: false});
-		server.connection();
-		server.register({
-			register: plugin,
-			options: {handler: testHandler}
-		}, (err) => {
-			if (err) {
-				return done(err);
-			}
-		});
+		server = new Hapi.Server({debug: false, compression: {minBytes: 1}});
 
-		route('/hello', (req, reply) => {
-			reply('hello');
-		});
+		server
+			.register({
+				plugin: plugin,
+				options: {handler: testHandler}
+			})
+			.catch(done);
+
+		route('/hello', () => 'hello');
 
 		testHandler.listener = (data) => {
 			const json = JSON.parse(data);
@@ -142,30 +136,28 @@ describe('Log service', () => {
 			done();
 		};
 
-		server.inject({
-			method: 'GET',
-			url: '/hello',
-			headers: {
-				'Accept-Encoding': 'compress, gzip' // disables contentLength
-			}
-		});
+		server
+			.inject({
+				method: 'GET',
+				url: '/hello',
+				headers: {
+					'Accept-Encoding': 'compress, gzip' // disables contentLength
+				}
+			})
+			.catch(done);
 	});
 
 	it('should handle response event in jsonOutput', (done) => {
 		server = new Hapi.Server({debug: false});
-		server.connection();
-		server.register({
-			register: plugin,
-			options: {handler: testHandler}
-		}, (err) => {
-			if (err) {
-				return done(err);
-			}
-		});
 
-		route('/hello', (req, reply) => {
-			reply('hello');
-		});
+		server
+			.register({
+				plugin: plugin,
+				options: {handler: testHandler}
+			})
+			.catch(done);
+
+		route('/hello', () => 'hello');
 
 		testHandler.listener = (data) => {
 			const json = JSON.parse(data);
@@ -187,13 +179,15 @@ describe('Log service', () => {
 			done();
 		};
 
-		server.inject({
-			method: 'GET',
-			url: '/hello',
-			headers: {
-				Referer: 'http://foo.com'
-			}
-		});
+		server
+			.inject({
+				method: 'GET',
+				url: '/hello',
+				headers: {
+					Referer: 'http://foo.com'
+				}
+			})
+			.catch(done);
 	});
 
 	it('should handle log event', (done) => {
@@ -206,14 +200,14 @@ describe('Log service', () => {
 	});
 
 	it('should set default name for instance', () => {
-		const log1 = plugin({});
-		should.ok(plugin() === log1);
+		const log1 = index({});
+		should.ok(index() === log1);
 	});
 
 	it('should set name for instance', () => {
-		const log1 = plugin('foo');
-		should.ok(plugin() !== log1);
-		should.ok(plugin('foo') === log1);
+		const log1 = index('foo');
+		should.ok(index() !== log1);
+		should.ok(index('foo') === log1);
 	});
 
 	function route(path, handler) {
