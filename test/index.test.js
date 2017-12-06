@@ -118,6 +118,32 @@ describe('Log service', () => {
 			.catch(done);
 	});
 
+	it('should should use x-forwarded-for if available for response logs', (done) => {
+		server = new Hapi.Server({debug: false});
+
+		server
+			.register({
+				plugin: plugin,
+				options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
+			})
+			.catch(done);
+
+		route('/hello', () => 'hello');
+
+		testHandler.listener = (data) => {
+			data.should.match(/\[response\], 12\.12\.12\.12/);
+			done();
+		};
+
+		server
+			.inject({
+				method: 'GET',
+				url: '/hello',
+				headers: {'x-forwarded-for': '12.12.12.12,10.10.10.10'}
+			})
+			.catch(done);
+	});
+
 	it('should handle not include contentLength if missing', (done) => {
 		server = new Hapi.Server({debug: false, compression: {minBytes: 1}});
 
