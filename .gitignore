@@ -3,3 +3,4 @@ npm-debug.log
 coverage
 config/config.json
 config/config.test.json
+package-lock.json
