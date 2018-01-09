@@ -179,7 +179,14 @@ describe('Log service', () => {
 		server
 			.register({
 				plugin: plugin,
-				options: {handler: testHandler}
+				options: {
+					handler: testHandler,
+					requestInfoFilter: (requestInfo) => {
+						requestInfo.query = Object.assign({}, requestInfo.query, {apikey: undefined, token: '--snip--'});
+						requestInfo.referer = '';
+						return requestInfo;
+					}
+				}
 			})
 			.catch(done);
 
@@ -202,13 +209,16 @@ describe('Log service', () => {
 				'userAgent',
 				'referer'
 			]);
+			should.ok(json.query.apikey === undefined);
+			json.query.token.should.equal('--snip--');
+			json.referer.should.equal('');
 			done();
 		};
 
 		server
 			.inject({
 				method: 'GET',
-				url: '/hello',
+				url: '/hello?apikey=secret&token=retract',
 				headers: {
 					Referer: 'http://foo.com'
 				}
