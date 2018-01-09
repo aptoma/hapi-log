@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.2.0
+
+ * [[2ef630f](../../commit/2ef630f)] Add support for filtering logged request info
+
 ## 4.1.0
 
 * [[a787dc9](../../commit/a787dc9)] Use first entry in x-forwarded-for as remoteAdress in response logs
