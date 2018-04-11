@@ -43,6 +43,34 @@ describe('Log service', () => {
 		});
 	});
 
+	it('should output error with stack using req.log', (done) => {
+		route('/hello', (req) => {
+			req.log(['foo'], new Error('ops'));
+			return 'hello';
+		});
+
+		testHandler.listener = (data) => {
+			data.should.match(/Error: ops\n\s+at/);
+			testHandler.listener = () => {};
+			done();
+		};
+
+		server.inject({
+			method: 'GET',
+			url: '/hello'
+		});
+	});
+
+	it('should output error with stack using server.log', (done) => {
+		testHandler.listener = (data) => {
+			data.should.match(/Error: ops\n\s+at/);
+			testHandler.listener = () => {};
+			done();
+		};
+
+		server.log(['foo'], new Error('ops'));
+	});
+
 	it('should handle onPreResponse', (done) => {
 		server = new Hapi.Server({debug: false});
 		server
