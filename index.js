@@ -35,7 +35,7 @@ module.exports.plugin = {
 			server.ext('onPreResponse', (request, h) => {
 				const response = request.response;
 				// check isServer cause we don't log the expected errors we return.
-				if (response.isBoom && response.isServer) {
+				if (response.isBoom && response.isServer && response.output.statusCode === 500) {
 					log.handleError(request, {error: response});
 				}
 
