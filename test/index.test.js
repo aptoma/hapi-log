@@ -101,6 +101,50 @@ describe('Log service', () => {
 			.catch(done);
 	});
 
+	it('should not log non 500 errors when using onPreResponse', (done) => {
+		server = new Hapi.Server({debug: false});
+		server.ext('onPreResponse', (req, h) => {
+			const res = req.response;
+			res.output.statusCode = 400;
+			res.message = 'Ops';
+			res.reformat();
+			return h.continue;
+		});
+
+		server
+			.register({
+				plugin: plugin,
+				options: {handler: testHandler, jsonOutput: false, onPreResponseError: true}
+			})
+			.catch(done);
+
+
+		route('/error', () => {
+			throw new Error('yikes');
+		});
+
+		testHandler.listener = (data) => {
+			testHandler.listener = () => {};
+			try {
+				data.should.match(/\[response\]/);
+			} catch (err) {
+				return done(err);
+			}
+
+			done();
+		};
+
+		server
+			.inject({
+				method: 'GET',
+				url: '/error',
+				headers: {
+					Referer: 'http://foo.com'
+				}
+			})
+			.catch(done);
+	});
+
 	it('should handle error', (done) => {
 		route('/error', () => {
 			throw new Error('crap');
