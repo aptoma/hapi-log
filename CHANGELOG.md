@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.3.0
+
+* [[6454508](../../commit/6454508)] Don’t log handled errors when using onPreResponse
+
 ## 4.2.1
 
 * [[89e95d4](../../commit/89e95d4)] Fix bug with logged errors not showing in log output
