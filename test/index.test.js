@@ -1,5 +1,5 @@
 'use strict';
-const Hapi = require('hapi');
+const Hapi = require('@hapi/hapi');
 const should = require('should');
 const index = require('../');
 const plugin = index.plugin;
@@ -160,7 +160,7 @@ describe('Log service', () => {
 			.inject({
 				method: 'GET',
 				url: '/error',
-				credentials: {account: {clientId: 'example'}}
+				auth: {strategy: 'default', credentials: {account: {clientId: 'example'}}}
 			})
 			.catch(done);
 	});

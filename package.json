@@ -13,32 +13,30 @@
   },
   "scripts": {
     "lint": "eslint --ext '.js' lib test '*.js'",
-    "test": "npm run lint && NODE_ENV=test istanbul cover -i '{.,./lib}/*.js' _mocha -- -u exports -R spec --timeout 3000 'test/**/*.test.js'",
+    "test": "npm run lint && nyc --reporter=text-summary --reporter=lcov mocha --exit 'test/**/*.test.js'",
     "watch": "mocha --watch 'test/**/*.js' --timeout 500",
-    "ci": "npm test --coverage && istanbul report cobertura",
     "release": "npm test && release-it -n -i patch",
     "release:minor": "npm test && release-it -n -i minor",
     "release:major": "npm test && release-it -n -i major"
   },
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "license": "UNLICENSED",
   "dependencies": {
-    "chalk": "^2.3.0",
-    "hoek": "^5.0.2",
+    "@hapi/hoek": "^8.0.2",
+    "chalk": "^2.4.2",
     "json-stringify-safe": "^5.0.1",
-    "moment": "^2.19.3"
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@aptoma/eslint-config": "^7.0.1",
-    "eslint": "^4.12.1",
-    "hapi": "^17.1.1",
-    "istanbul": "^0.4.5",
-    "mocha": "^4.0.1",
-    "nsp": "^3.1.0",
+    "@hapi/hapi": "^18.3.1",
+    "eslint": "^6.0.1",
+    "mocha": "^6.1.4",
+    "nyc": "^14.1.1",
     "release-it": "^2.0.3",
-    "should": "^13.1.3",
-    "sinon": "^4.1.2"
+    "should": "^13.2.3",
+    "sinon": "^7.3.2"
   }
 }
