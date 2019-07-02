@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.0.0
+
+* [[70edf5c](../../commit/70edf5c)] Update deps & drop node 8 support
+
 ## 4.3.0
 
 * [[6454508](../../commit/6454508)] Don’t log handled errors when using onPreResponse
