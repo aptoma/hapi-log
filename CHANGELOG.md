@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.0.1
+
+* [[1ddf053](../../commit/1ddf053)] Handle pretty printing of console.log of unexpected format
+
 ## 5.0.0
 
 * [[70edf5c](../../commit/70edf5c)] Update deps & drop node 8 support
