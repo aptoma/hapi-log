@@ -17,7 +17,8 @@
     "watch": "mocha --watch 'test/**/*.js' --timeout 500",
     "release": "npm test && release-it -n -i patch",
     "release:minor": "npm test && release-it -n -i minor",
-    "release:major": "npm test && release-it -n -i major"
+    "release:major": "npm test && release-it -n -i major",
+    "bench": "node benchmarks/index.js 2>/dev/null"
   },
   "engines": {
     "node": ">=10.0.0"
@@ -26,13 +27,15 @@
   "dependencies": {
     "@hapi/hoek": "^8.0.2",
     "chalk": "^2.4.2",
-    "json-stringify-safe": "^5.0.1",
-    "moment": "^2.24.0"
+    "fast-safe-stringify": "^2.0.7",
+    "sonic-boom": "^1.0.1"
   },
   "devDependencies": {
+    "moment": "^2.24.0",
     "@aptoma/eslint-config": "^7.0.1",
     "@hapi/hapi": "^18.3.1",
     "eslint": "^6.0.1",
+    "fastbench": "^1.0.1",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
     "release-it": "^2.0.3",
