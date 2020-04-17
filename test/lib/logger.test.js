@@ -20,12 +20,13 @@ describe('Logger', () => {
 		testHandler.log.restore();
 	});
 
-	it('should support custom timeformat', () => {
+	it('should support custom time formatter', () => {
 		log = new Logger({
 			jsonOutput: true,
 			handler: testHandler,
-			format: 'YYYY-MM-DD HH:mm:ss',
-			utc: true
+			formatTimestamp(ts) {
+				return moment(ts).format('YYYY-MM-DD HH:mm:ss');
+			}
 		});
 
 		log.log('info', 'foo');
