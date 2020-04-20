@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 6.0.0
+
+This release removes `format` and `utc` option and has been replaced with `formatTimestamp`.
+
+* [[9f9c1c2](../../commit/9f9c1c2)] Improve performance
+
 ## 5.0.1
 
 * [[1ddf053](../../commit/1ddf053)] Handle pretty printing of console.log of unexpected format
