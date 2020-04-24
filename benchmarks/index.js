@@ -1,7 +1,11 @@
 'use strict';
 
 const bench = require('fastbench');
-const hapiLog = require('../')({sonic: {fd: process.stderr.fd, sync: true}});
+const hapiLog = require('../')({handler: {
+	log(msg) {
+		process.stderr.write(msg + '\n');
+	}
+}});
 
 const max = 10;
 const error = new Error('crap');
@@ -29,4 +33,3 @@ const run = bench([
 ], 10000);
 
 run(run);
-

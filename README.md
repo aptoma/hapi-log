@@ -20,6 +20,10 @@ Creating releases
 	$ npm run release:minor
 	$ npm run release:major
 
+Running benchmarks
+
+	$ npm run bench
+
 ## Developer friendly output
 
 This package includes a script called `pretty-hapi-log` which can be used to parse the output and make it colorful and pretty.
