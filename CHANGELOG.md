@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.0.0
+
+* [[3eb452b](../../commit/3eb452b)] Remove sonic-boom, use process.stdout.write as default
+
 ## 6.0.0
 
 This release removes `format` and `utc` option and has been replaced with `formatTimestamp`.
