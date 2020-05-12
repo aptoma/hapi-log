@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 7.0.1
+
+* [[6233423](../../commit/6233423)] Fix default date formatter that used day as hour.
+
 ## 7.0.0
 
 * [[3eb452b](../../commit/3eb452b)] Remove sonic-boom, use process.stdout.write as default
