@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 7.1.0
+
+* [[734d099](../../commit/734d099)] Colorize log lines based on tag values
+* [[5104ccd](../../commit/5104ccd)] Move moment back to a regular dependency
+
 ## 7.0.1
 
 * [[6233423](../../commit/6233423)] Fix default date formatter that used day as hour.
