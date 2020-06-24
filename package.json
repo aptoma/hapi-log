@@ -27,10 +27,10 @@
   "dependencies": {
     "@hapi/hoek": "^8.0.2",
     "chalk": "^2.4.2",
-    "fast-safe-stringify": "^2.0.7"
+    "fast-safe-stringify": "^2.0.7",
+    "moment": "^2.27.0"
   },
   "devDependencies": {
-    "moment": "^2.24.0",
     "@aptoma/eslint-config": "^7.0.1",
     "@hapi/hapi": "^18.3.1",
     "eslint": "^6.0.1",
