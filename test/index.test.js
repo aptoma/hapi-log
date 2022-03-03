@@ -43,6 +43,31 @@ describe('Log service', () => {
 		});
 	});
 
+	it('should ignore path included in ignorePaths', async () => {
+		server = new Hapi.Server({debug: false});
+		await server.register({
+			plugin: plugin,
+			options: {handler: testHandler, jsonOutput: false, ignorePaths: ['/shouldIgnore']}
+		});
+
+		route('/shouldIgnore', () => {
+			return 'hello';
+		});
+
+		let called = false;
+		testHandler.listener = () => {
+			called = true;
+			testHandler.listener = () => {};
+		};
+
+		await server.inject({
+			method: 'GET',
+			url: '/shouldIgnore'
+		});
+
+		called.should.equal(false);
+	});
+
 	it('should output error with stack using req.log', (done) => {
 		route('/hello', (req) => {
 			req.log(['foo'], new Error('ops'));
