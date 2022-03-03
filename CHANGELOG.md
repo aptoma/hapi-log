@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 8.0.0
+
+* [[af09855](../../commit/af09855)] Add option ignorePaths
+* [[079952e](../../commit/079952e)] Require node 16 and update deps
+
 ## 7.1.0
 
 * [[734d099](../../commit/734d099)] Colorize log lines based on tag values
