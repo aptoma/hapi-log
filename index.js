@@ -21,13 +21,30 @@ module.exports = function (name, opts) {
 
 module.exports.plugin = {
 	name: 'service-log',
-	register(server, options) {
+	register(server, options = {}) {
+		const {ignorePaths = []} = options;
 		const log = new Logger(options);
 
 		server.events.on({name: 'request', channels: 'app'}, log.handleRequest.bind(log));
-		server.events.on('response', log.handleResponse.bind(log));
 		server.events.on('log', log.handleLog.bind(log));
 		server.events.on({name: 'request', channels: 'error'}, log.handleError.bind(log));
+
+		if (ignorePaths.length) {
+			const ignoreMap = ignorePaths.reduce((acc, path) => {
+				acc[path] = true;
+				return acc;
+			}, {});
+
+			server.events.on('response', (request) => {
+				if (ignoreMap[request.path]) {
+					return;
+				}
+
+				log.handleResponse(request);
+			});
+		} else {
+			server.events.on('response', log.handleResponse.bind(log));
+		}
 
 		// optionally add error logging on onPreResponse.
 		// To be used when reformatting output for errors in other plugins since it will disable the request-error event
