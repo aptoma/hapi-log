@@ -68,6 +68,31 @@ describe('Log service', () => {
 		called.should.equal(false);
 	});
 
+	it('should ignore method included in ignoreMethods', async () => {
+		server = new Hapi.Server({debug: false});
+		await server.register({
+			plugin: plugin,
+			options: {handler: testHandler, jsonOutput: false, ignoreMethods: ['options']}
+		});
+
+		route('/shouldIgnore', () => {
+			return 'hello';
+		}, 'options');
+
+		let called = false;
+		testHandler.listener = () => {
+			called = true;
+			testHandler.listener = () => {};
+		};
+
+		await server.inject({
+			method: 'OPTIONS',
+			url: '/shouldIgnore'
+		});
+
+		called.should.equal(false);
+	});
+
 	it('should output error with stack using req.log', (done) => {
 		route('/hello', (req) => {
 			req.log(['foo'], new Error('ops'));
@@ -343,9 +368,9 @@ describe('Log service', () => {
 		should.ok(index('foo') === log1);
 	});
 
-	function route(path, handler) {
+	function route(path, handler, method) {
 		server.route({
-			method: 'GET',
+			method: method || 'GET',
 			path: path,
 			handler: handler
 		});
