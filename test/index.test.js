@@ -368,6 +368,90 @@ describe('Log service', () => {
 		should.ok(index('foo') === log1);
 	});
 
+	it('should extract log level if extractLogLevel is true', () => {
+		let line = {};
+		const logger = index('extract:1', {
+			extractLogLevel: true,
+			handler: {
+				log(str) {
+					line = JSON.parse(str);
+				}
+			}
+		});
+		const levels = ['info', 'warn', 'warning', 'err', 'error', 'fatal', 'debug'];
+		levels.forEach((level) => {
+			logger.log([level]);
+			should.equal(line._level, level);
+			should.equal(line._tags.length, 0);
+
+			logger.log(['other_tag', level]);
+			should.equal(line._level, level);
+			should.equal(line._tags.length, 1);
+
+			logger.log(['other_tag', 'yet_another_tag', level]);
+			should.equal(line._level, level);
+			should.equal(line._tags.length, 2);
+		});
+	});
+
+	it('should leave tags unchanged if extractLogLevel is false', () => {
+		let line = {};
+		const logger = index('extract:2', {
+			extractLogLevel: false,
+			handler: {
+				log(str) {
+					line = JSON.parse(str);
+				}
+			}
+		});
+		const levels = ['info', 'warn', 'warning', 'err', 'error', 'fatal', 'debug'];
+		levels.forEach((level) => {
+			let tags = [level];
+			logger.log(tags);
+			should.equal(line._level, undefined);
+			should.deepEqual(line._tags, tags);
+
+			tags = ['other_tag', level];
+			logger.log(tags);
+			should.equal(line._level, undefined);
+			should.deepEqual(line._tags, tags);
+
+			tags = ['other_tag', 'yet_another_tag', level];
+			logger.log(tags);
+			should.equal(line._level, undefined);
+			should.deepEqual(line._tags, tags);
+		});
+	});
+
+	it('should leave tags unchanged if there is no log level in the tags', () => {
+		let line = {};
+		const logger = index('extract:3', {
+			extractLogLevel: false,
+			handler: {
+				log(str) {
+					line = JSON.parse(str);
+				}
+			}
+		});
+		const levels = ['foo', 'bar', 'information', 'terror'];
+		levels.forEach((level) => {
+			let tags = [level];
+			logger.log(tags);
+			should.equal(line._level, undefined);
+			should.deepEqual(line._tags, tags);
+
+			tags = ['other_tag', level];
+			logger.log(tags);
+			should.equal(line._level, undefined);
+			should.deepEqual(line._tags, tags);
+
+			tags = ['other_tag', 'yet_another_tag', level];
+			logger.log(tags);
+			should.equal(line._level, undefined);
+			should.deepEqual(line._tags, tags);
+		});
+	});
+
 	function route(path, handler, method) {
 		server.route({
 			method: method || 'GET',
