@@ -368,7 +368,7 @@ describe('Log service', () => {
 		should.ok(index('foo') === log1);
 	});
 
-	it('should extract log level if extractLogLevel is true', () => {
+	it('should extract log level from the first tag if extractLogLevel is true', () => {
 		let line = {};
 		const logger = index('extract:1', {
 			extractLogLevel: true,
@@ -385,11 +385,7 @@ describe('Log service', () => {
 			should.equal(line._tags.length, 0);
 
 			logger.log(['other_tag', level]);
-			should.equal(line._level, level);
-			should.equal(line._tags.length, 1);
-
-			logger.log(['other_tag', 'yet_another_tag', level]);
-			should.equal(line._level, level);
+			should.equal(line._level, undefined);
 			should.equal(line._tags.length, 2);
 		});
 	});
