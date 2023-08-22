@@ -1,5 +1,9 @@
 ### Changelog
 
+#### [9.0.0](https://github.com/aptoma/hapi-log/compare/8.1.2...9.0.0) 2023-08-22
+
+- Remove prepended tag "log" on server.log [`e96f935`](https://github.com/aptoma/hapi-log/commit/e96f935720d6cc886391bd0a2583ac0aebe5cb5f)
+
 #### [8.1.2](https://github.com/aptoma/hapi-log/compare/8.1.1...8.1.2) 2022-05-11
 
 - Fix filename for auto-changelog config [`ebb13b8`](https://github.com/aptoma/hapi-log/commit/ebb13b88c11dfaf61b103e69ac381d6cb1425088)
