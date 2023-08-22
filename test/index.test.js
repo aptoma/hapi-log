@@ -350,7 +350,7 @@ describe('Log service', () => {
 
 	it('should handle log event', (done) => {
 		testHandler.listener = (data) => {
-			data.should.endWith('[log,foo], { foo: \'bar\' }');
+			data.should.endWith('[foo], { foo: \'bar\' }');
 			done();
 		};
 
