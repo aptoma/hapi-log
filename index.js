@@ -5,6 +5,11 @@ const internals = {
 	instances: {}
 };
 
+/**
+ * @param {string} [name]
+ * @param {import('./lib/logger').LoggerOptions} [opts]
+ * @returns {Logger}
+ */
 module.exports = function (name, opts) {
 	name = name || '_default';
 	if (typeof (name) === 'object') {
