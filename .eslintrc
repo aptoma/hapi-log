@@ -1,11 +1,14 @@
 {
 	"extends": "@aptoma/eslint-config",
 	"parserOptions": {
-	  "ecmaVersion": 10
+	  "ecmaVersion": 2022
 	},
 	"env": {
 		"node": true,
 		"mocha": true,
 		"es6": true
+	},
+	"rules": {
+		"valid-jsdoc": "off"
 	}
 }

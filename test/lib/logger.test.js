@@ -1,6 +1,5 @@
 'use strict';
 const sinon = require('sinon');
-const moment = require('moment');
 const Logger = require('../../lib/logger');
 const should = require('should');
 
@@ -21,17 +20,18 @@ describe('Logger', () => {
 	});
 
 	it('should support custom time formatter', () => {
+		const timeFormatter = new Intl.DateTimeFormat(undefined, {hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false});
 		log = new Logger({
 			jsonOutput: true,
 			handler: testHandler,
 			formatTimestamp(ts) {
-				return moment(ts).format('YYYY-MM-DD HH:mm:ss');
+				return timeFormatter.format(new Date(ts));
 			}
 		});
 
 		log.log('info', 'foo');
 		const json = JSON.parse(consoleSpy.firstCall.args[0]);
-		json._time.should.equal(moment().format('YYYY-MM-DD HH:mm:ss'));
+		json._time.should.equal(timeFormatter.format(new Date()));
 	});
 
 	describe('humanReadable Format', () => {
