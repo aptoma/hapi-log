@@ -1,6 +1,15 @@
 ### Changelog
 
-#### [9.0.0](https://github.com/aptoma/hapi-log/compare/8.1.2...9.0.0) 2023-08-22
+#### [11.0.0](https://github.com/aptoma/hapi-log/compare/10.0.0...11.0.0) 2025-10-14
+
+- Require node 22, remove deps and update dev deps [`184fd95`](https://github.com/aptoma/hapi-log/commit/184fd95869921a097a2ab55111114d9311a64f27)
+- Replace travis with GH actions [`8a3a6f4`](https://github.com/aptoma/hapi-log/commit/8a3a6f4d2e6e4dd91cf7cc58004638d35e8d9a82)
+
+### [10.0.0](https://github.com/aptoma/hapi-log/compare/9.0.0...10.0.0) 2024-01-30
+
+- Remove prepended tag log on req.log [`a0e86eb`](https://github.com/aptoma/hapi-log/commit/a0e86eba1229a20567d1ff6c5ff43c2e9f58050d)
+
+### [9.0.0](https://github.com/aptoma/hapi-log/compare/8.1.2...9.0.0) 2023-08-22
 
 - Remove prepended tag "log" on server.log [`e96f935`](https://github.com/aptoma/hapi-log/commit/e96f935720d6cc886391bd0a2583ac0aebe5cb5f)
 
