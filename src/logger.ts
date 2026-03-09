@@ -1,7 +1,7 @@
-import {format as printf, inspect} from 'node:util';
+import {inspect, format as printf} from 'node:util';
+import type {LogEvent, Request, RequestEvent, ResponseObject} from '@hapi/hapi';
 import stringify from 'fast-safe-stringify';
 import {timestamp as defaultFormatTimestamp} from './format.js';
-import type {Request, RequestEvent, LogEvent, ResponseObject} from '@hapi/hapi';
 
 export interface LogHandler {
 	log(message: string): void;
@@ -67,7 +67,7 @@ function defaultMeta(request?: Request): Record<string, unknown> | undefined {
 function defaultHandler(): LogHandler {
 	return {
 		log(str) {
-			process.stdout.write(str + '\n');
+			process.stdout.write(`${str}\n`);
 		}
 	};
 }
@@ -107,9 +107,10 @@ export class Logger {
 	handleResponse(request: Request): void {
 		const referer = request.raw.req.headers.referer;
 		const response = request.response;
-		const contentLengthValue = 'headers' in response
-			? (response as ResponseObject).headers['content-length'] as string | undefined
-			: undefined;
+		const contentLengthValue =
+			'headers' in response
+				? ((response as ResponseObject).headers['content-length'] as string | undefined)
+				: undefined;
 
 		let remoteAddress = request.info.remoteAddress;
 		const xFF = request.headers['x-forwarded-for'];
@@ -155,7 +156,7 @@ export class Logger {
 			stringify(data.query),
 			data.statusCode,
 			data.responseTime,
-			data.referer ? data.referer + ', ' : '',
+			data.referer ? `${data.referer}, ` : '',
 			data.userAgent
 		);
 	}
@@ -182,7 +183,7 @@ export class Logger {
 			this.formatTime(obj.timestamp),
 			obj.tags.join(','),
 			log,
-			obj.data ? ', ' + stringify(obj.data) : ''
+			obj.data ? `, ${stringify(obj.data)}` : ''
 		);
 	}
 

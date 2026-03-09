@@ -1,10 +1,10 @@
-import {Logger} from './logger.js';
-import type {LoggerOptions, PluginOptions} from './logger.js';
-import type {Server, Request, ResponseToolkit} from '@hapi/hapi';
 import type {Boom} from '@hapi/boom';
+import type {Request, ResponseToolkit, Server} from '@hapi/hapi';
+import type {LoggerOptions, PluginOptions} from './logger.js';
+import {Logger} from './logger.js';
 
+export type {LogData, LoggerOptions, LogHandler, PluginOptions, RequestInfo} from './logger.js';
 export {Logger} from './logger.js';
-export type {LogHandler, RequestInfo, LogData, LoggerOptions, PluginOptions} from './logger.js';
 
 const instances: Record<string, Logger> = {};
 

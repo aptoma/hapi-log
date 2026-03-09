@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import readline from 'node:readline';
-import {styleText, format} from 'node:util';
+import {format, styleText} from 'node:util';
 
 const timeFormatter = new Intl.DateTimeFormat(undefined, {
 	hour: '2-digit',
@@ -27,7 +27,7 @@ rl.on('line', (line: string) => {
 		return console.log(line);
 	}
 
-	if (json._tags instanceof Array && (json._tags as string[]).indexOf('response') > -1) {
+	if (Array.isArray(json._tags) && (json._tags as string[]).indexOf('response') > -1) {
 		return formatResponse(json);
 	}
 
@@ -53,15 +53,14 @@ rl.on('line', (line: string) => {
 });
 
 function props(o: Record<string, unknown>, exclude: string[]): string {
-	return Object
-		.keys(o)
+	return Object.keys(o)
 		.filter((key) => exclude.indexOf(key) === -1)
 		.map((key) => `${key}: ${stringify(o[key])}`)
 		.join(', ');
 }
 
 function stringify(data: unknown): unknown {
-	if (typeof (data) !== 'object') {
+	if (typeof data !== 'object') {
 		return data;
 	}
 
@@ -80,15 +79,13 @@ function colorizeTags(tags: string[]): string {
 		color2 = 'yellow';
 	}
 
-	return tags.map((t, idx) =>
-		idx % 2 === 0 ? styleText(color1, t) : styleText(color2, t)
-	).join(', ');
+	return tags.map((t, idx) => (idx % 2 === 0 ? styleText(color1, t) : styleText(color2, t))).join(', ');
 }
 
 function formatResponse(json: Record<string, unknown>): void {
 	const time = timeFormatter.format(new Date(json._time as string));
 
-	const statusColor = ((json.statusCode as number) / 100 | 0) > 3 ? 'red' as const : 'green' as const;
+	const statusColor = (((json.statusCode as number) / 100) | 0) > 3 ? ('red' as const) : ('green' as const);
 
 	const msg = format(
 		'%s %s %s %s %s %s ms',
