@@ -1,7 +1,7 @@
 {
 	"pkgFiles": ["package.json", "package-lock.json"],
 	"git": {
-		"requireCleanWorkingDir": true,
+		"requireCleanWorkingDir": false,
 		"changelog": "auto-changelog --stdout --commit-limit false -u --template https://raw.githubusercontent.com/release-it/release-it/master/templates/changelog-compact.hbs"
 	},
 	"hooks": {

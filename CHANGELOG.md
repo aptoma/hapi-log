@@ -1,6 +1,11 @@
 ### Changelog
 
-#### [11.0.0](https://github.com/aptoma/hapi-log/compare/10.0.0...11.0.0) 2025-10-14
+#### [12.0.0](https://github.com/aptoma/hapi-log/compare/11.0.0...12.0.0) 2026-03-09
+
+- Remove cjs, remove test-dependencies, replace eslint with biome [`85cebab`](https://github.com/aptoma/hapi-log/commit/85cebab53d3d2ce2e8b232b764573bda4d582edc)
+- Convert to TypeScript [`ba82f12`](https://github.com/aptoma/hapi-log/commit/ba82f1273187cc1330de1056b7821f136139e8a0)
+
+### [11.0.0](https://github.com/aptoma/hapi-log/compare/10.0.0...11.0.0) 2025-10-14
 
 - Require node 22, remove deps and update dev deps [`184fd95`](https://github.com/aptoma/hapi-log/commit/184fd95869921a097a2ab55111114d9311a64f27)
 - Replace travis with GH actions [`8a3a6f4`](https://github.com/aptoma/hapi-log/commit/8a3a6f4d2e6e4dd91cf7cc58004638d35e8d9a82)

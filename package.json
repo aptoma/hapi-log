@@ -1,7 +1,7 @@
 {
 	"name": "@aptoma/hapi-log",
 	"author": "Martin Jonsson <martin@aptoma.com>",
-	"version": "12.0.0-beta",
+	"version": "12.0.0",
 	"description": "Hapi Log Plugin",
 	"type": "module",
 	"main": "./dist/index.js",
