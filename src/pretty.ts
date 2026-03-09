@@ -1,8 +1,6 @@
 #!/usr/bin/env node
-'use strict';
-
-const readline = require('node:readline');
-const {styleText, format} = require('node:util');
+import readline from 'node:readline';
+import {styleText, format} from 'node:util';
 
 const timeFormatter = new Intl.DateTimeFormat(undefined, {
 	hour: '2-digit',
@@ -17,20 +15,19 @@ const rl = readline.createInterface({
 	terminal: false
 });
 
-// eslint-disable-next-line complexity
-rl.on('line', (line) => {
+rl.on('line', (line: string) => {
 	if (!line) {
 		return console.log();
 	}
 
-	let json;
+	let json: Record<string, unknown>;
 	try {
 		json = JSON.parse(line);
-	} catch (e) {
+	} catch {
 		return console.log(line);
 	}
 
-	if (json._tags instanceof Array && json._tags.indexOf('response') > -1) {
+	if (json._tags instanceof Array && (json._tags as string[]).indexOf('response') > -1) {
 		return formatResponse(json);
 	}
 
@@ -38,16 +35,15 @@ rl.on('line', (line) => {
 		return console.log(line);
 	}
 
-	const time = timeFormatter.format(new Date(json._time));
+	const time = timeFormatter.format(new Date(json._time as string));
 
-	const tags = json._tags || [];
+	const tags = (json._tags as string[]) || [];
 	const tagsStr = tags.length > 0 ? colorizeTags(tags) : '';
 	const msg = format(
-		'%s %s%s%s%s %s %s',
+		'%s %s%s%s %s %s',
 		styleText('gray', time),
 		styleText('gray', '['),
 		tagsStr,
-		tagsStr ? '' : '', // no extra space if no tags
 		styleText('gray', '] -'),
 		json.msg || '',
 		props(json, ['msg', '_time', '_tags'])
@@ -56,7 +52,7 @@ rl.on('line', (line) => {
 	console.log(msg);
 });
 
-function props(o, exclude) {
+function props(o: Record<string, unknown>, exclude: string[]): string {
 	return Object
 		.keys(o)
 		.filter((key) => exclude.indexOf(key) === -1)
@@ -64,7 +60,7 @@ function props(o, exclude) {
 		.join(', ');
 }
 
-function stringify(data) {
+function stringify(data: unknown): unknown {
 	if (typeof (data) !== 'object') {
 		return data;
 	}
@@ -72,11 +68,9 @@ function stringify(data) {
 	return JSON.stringify(data);
 }
 
-function colorizeTags(tags) {
-	/** @type {'blue' | 'red' | 'yellow'} */
-	let color1 = 'blue';
-	/** @type {'cyan' | 'red' | 'yellow'} */
-	let color2 = 'cyan';
+function colorizeTags(tags: string[]): string {
+	let color1: 'blue' | 'red' | 'yellow' = 'blue';
+	let color2: 'cyan' | 'red' | 'yellow' = 'cyan';
 
 	if (tags.find((tag) => tag === 'error')) {
 		color1 = 'red';
@@ -91,15 +85,15 @@ function colorizeTags(tags) {
 	).join(', ');
 }
 
-function formatResponse(json) {
-	const time = timeFormatter.format(new Date(json._time));
+function formatResponse(json: Record<string, unknown>): void {
+	const time = timeFormatter.format(new Date(json._time as string));
 
-	const statusColor = (json.statusCode / 100 | 0) > 3 ? 'red' : 'green';
+	const statusColor = ((json.statusCode as number) / 100 | 0) > 3 ? 'red' as const : 'green' as const;
 
 	const msg = format(
 		'%s %s %s %s %s %s ms',
 		styleText('gray', time),
-		styleText(statusColor, json.method),
+		styleText(statusColor, json.method as string),
 		json.path,
 		styleText('cyan', JSON.stringify(json.query)),
 		styleText(statusColor, String(json.statusCode)),

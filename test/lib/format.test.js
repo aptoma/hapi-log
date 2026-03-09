@@ -1,7 +1,7 @@
 'use strict';
 
 const should = require('should');
-const format = require('../../lib/format');
+const format = require('../../dist/cjs/format');
 
 describe('format', () => {
 	describe('timestamp()', () => {

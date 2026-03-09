@@ -3,40 +3,67 @@
   "author": "Martin Jonsson <martin@aptoma.com>",
   "version": "11.0.0",
   "description": "Hapi Log Plugin",
-  "main": "index.js",
+  "type": "module",
+  "main": "dist/cjs/index.js",
+  "types": "dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
   "bin": {
-    "pretty-hapi-log": "./lib/pretty.js"
+    "pretty-hapi-log": "./dist/esm/pretty.js"
   },
   "repository": {
     "type": "git",
     "url": "git@github.com:aptoma/hapi-log.git"
   },
   "scripts": {
-    "lint": "eslint --ext '.js' lib test '*.js'",
-    "test": "npm run lint && nyc --reporter=text-summary --reporter=lcov mocha --exit 'test/**/*.test.js'",
+    "build": "node scripts/build.cjs",
+    "lint": "eslint --ext '.js' test",
+    "typecheck": "tsc -p tsconfig.esm.json --noEmit",
+    "pretest": "npm run build",
+    "test": "npm run lint && npm run typecheck && nyc --reporter=text-summary --reporter=lcov mocha --exit 'test/**/*.test.js'",
     "watch": "mocha --watch 'test/**/*.js' --timeout 500",
+    "prepublishOnly": "npm test",
     "release": "npm test && release-it -n -i patch",
     "release:minor": "npm test && release-it -n -i minor",
     "release:major": "npm test && release-it -n -i major",
-    "bench": "node benchmarks/index.js 2>/dev/null"
+    "bench": "npm run build && node benchmarks/index.js 2>/dev/null"
   },
   "engines": {
     "node": ">=22.0.0"
   },
   "license": "UNLICENSED",
+  "peerDependencies": {
+    "@hapi/hapi": ">=21"
+  },
   "dependencies": {
     "fast-safe-stringify": "^2.1.1"
   },
   "devDependencies": {
     "@aptoma/eslint-config": "^7.0.1",
     "@hapi/hapi": "^21.4.3",
+    "@types/node": "^24.12.0",
     "auto-changelog": "^2.5.0",
     "eslint": "^8.10.0",
     "fastbench": "^1.0.1",
+    "joi": "^18.0.2",
     "mocha": "^11.7.4",
     "nyc": "^17.1.0",
     "release-it": "^19.0.5",
     "should": "^13.2.3",
-    "sinon": "^21.0.0"
+    "sinon": "^21.0.0",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,6 +1,6 @@
 'use strict';
 const sinon = require('sinon');
-const Logger = require('../../lib/logger');
+const {Logger} = require('../../dist/cjs/logger');
 const should = require('should');
 
 describe('Logger', () => {
